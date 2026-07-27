@@ -1,12 +1,12 @@
 import React from 'react';
-import { useGameStore } from '../../store/gameStore';
+import { useGameStore, DEFAULT_COLORS } from '../../store/gameStore';
 import { useUIStore } from '../../store/uiStore';
 import { X, Plus, Minus, Skull, Zap, ArrowUpCircle, Search, Shield, Crown, Radiation } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const CountersModal: React.FC = () => {
   const { activePlayerId, setActivePlayer, openSearchModal } = useUIStore();
-  const { players, updateCommanderDamage, updateCounter, setMonarch } = useGameStore();
+  const { players, updateCommanderDamage, updateCounter, setMonarch, updatePlayerName, updatePlayerColor } = useGameStore();
 
   const [diceResult, setDiceResult] = React.useState<number | null>(null);
   const [isRolling, setIsRolling] = React.useState(false);
@@ -14,6 +14,27 @@ export const CountersModal: React.FC = () => {
   const player = players.find(p => p.id === activePlayerId);
 
   const opponents = player ? players.filter(p => p.id !== activePlayerId) : [];
+
+  const [localName, setLocalName] = React.useState('');
+
+  React.useEffect(() => {
+    if (player) setLocalName(player.name);
+  }, [player?.id]);
+
+  const isNameDuplicate = players.some(
+    p => p.id !== activePlayerId && p.name.trim().toLowerCase() === localName.trim().toLowerCase()
+  );
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value;
+    setLocalName(newName);
+    const isDup = players.some(
+      p => p.id !== activePlayerId && p.name.trim().toLowerCase() === newName.trim().toLowerCase()
+    );
+    if (!isDup && newName.trim() !== '') {
+      updatePlayerName(activePlayerId!, newName);
+    }
+  };
 
   const rollDice = (sides: number) => {
     if (isRolling) return;
@@ -148,6 +169,42 @@ export const CountersModal: React.FC = () => {
                 'bg-neutral-800'
               )
             ))}
+          </div>
+
+          <div className="space-y-3 pt-4 border-t border-neutral-700/50">
+            <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-wider">Player Configuration</h3>
+            
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Player Name</label>
+              <input
+                type="text"
+                value={localName}
+                onChange={handleNameChange}
+                placeholder="Enter player name"
+                className={`bg-neutral-800 text-white px-4 py-3 rounded-xl border focus:outline-none transition-colors ${
+                  isNameDuplicate ? 'border-red-500 focus:border-red-500' : 'border-neutral-700 focus:border-blue-500'
+                }`}
+              />
+              {isNameDuplicate && (
+                <span className="text-red-400 text-sm">This name is already taken.</span>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">Player Color</label>
+              <div className="flex flex-wrap gap-2">
+                {DEFAULT_COLORS.map(color => (
+                  <button
+                    key={color}
+                    onClick={() => updatePlayerColor(activePlayerId!, color)}
+                    className={`w-10 h-10 rounded-full border-4 transition-transform ${
+                      player.colorAccent === color ? 'border-white scale-110 shadow-lg' : 'border-transparent hover:scale-110'
+                    }`}
+                    style={{ backgroundColor: color }}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="space-y-3 pt-4 border-t border-neutral-700/50">

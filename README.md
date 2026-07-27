@@ -10,6 +10,8 @@ Commander Counter is a shared-device companion application for physical Magic: T
 - **Special Counters**: Track Poison, Energy, Experience, and Fallout-themed Radiation counters.
 - **Commander Damage**: Track 21-point commander damage from every specific opponent.
 - **The Monarch**: Elegant UI overlay to track who currently holds the crown.
+- **Drag-and-Drop Reordering**: Easily rearrange player positions on the screen during the game.
+- **Floating Life Feedback**: Temporary bubbles show exactly how much life was just added or subtracted.
 - **Scryfall Integration**: Search and set your Commander card art dynamically.
 - **Advanced Visual Feedback**: Dynamic screen borders (vignettes) pulse to warn players of critically low life, high poison, or fatal incoming commander damage.
 - **Dice Roller**: Integrated digital dice roller (d4, d6, d8, d10, d20).

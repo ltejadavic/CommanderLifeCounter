@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { useUIStore } from '../../store/uiStore';
 import { X, Search, Loader2 } from 'lucide-react';
@@ -23,6 +23,14 @@ export const CommanderSearchModal: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const player = players.find(p => p.id === searchPlayerId);
+
+  // Reset local state when modal opens for a different player
+  useEffect(() => {
+    if (isSearchModalOpen && searchPlayerId && player) {
+      setQuery('');
+      setResults([]);
+    }
+  }, [isSearchModalOpen, searchPlayerId]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,7 +80,7 @@ export const CommanderSearchModal: React.FC = () => {
               className="p-4 flex items-center justify-between shadow-lg"
           style={{ backgroundColor: player.colorAccent }}
         >
-          <h2 className="text-2xl font-bold text-white text-shadow">Set Commander for {player.name}</h2>
+          <h2 className="text-2xl font-bold text-white text-shadow">Set Commander for {player?.name}</h2>
           <button 
             onClick={closeSearchModal}
             className="p-2 bg-black/20 hover:bg-black/40 rounded-full transition-colors text-white"

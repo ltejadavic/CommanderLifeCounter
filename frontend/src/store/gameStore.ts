@@ -35,6 +35,7 @@ export type GameState = {
   updatePlayerName: (playerId: string, name: string) => void;
   updatePlayerColor: (playerId: string, color: string) => void;
   updateCommander: (playerId: string, name: string, imageUrl: string, artCropUrl: string) => void;
+  reorderPlayers: (activeId: string, overId: string) => void;
   resetGame: () => void;
   resetGameFully: () => void;
   setMonarch: (playerId: string) => void;
@@ -42,7 +43,7 @@ export type GameState = {
   setGameState: (state: GameState) => void;
 };
 
-const DEFAULT_COLORS = [
+export const DEFAULT_COLORS = [
   '#ef4444', // red
   '#3b82f6', // blue
   '#22c55e', // green
@@ -63,11 +64,13 @@ export const useGameStore = create<GameState>((set) => ({
   setSetupConfig: (playerCount, startingLife, isArchenemy = false) => set({ playerCount, startingLife, isArchenemy }),
 
   initializeGame: (playerCount) => set((state) => {
+    const shuffledColors = [...DEFAULT_COLORS].sort(() => Math.random() - 0.5);
+
     const newPlayers: Player[] = Array.from({ length: playerCount }).map((_, index) => ({
       id: uuidv4(),
       name: `Player ${index + 1}`,
       life: state.isArchenemy && index === 0 ? 40 : state.startingLife,
-      colorAccent: DEFAULT_COLORS[index % DEFAULT_COLORS.length],
+      colorAccent: shuffledColors[index % shuffledColors.length],
       isDefeated: false,
       isMonarch: false,
       commanderDamage: {},
@@ -134,6 +137,18 @@ export const useGameStore = create<GameState>((set) => ({
   updateCommander: (playerId, name, imageUrl, artCropUrl) => set((state) => ({
     players: state.players.map((p) => p.id === playerId ? { ...p, commanderName: name, commanderImageUrl: imageUrl, commanderArtCropUrl: artCropUrl } : p)
   })),
+
+  reorderPlayers: (activeId, overId) => set((state) => {
+    const oldIndex = state.players.findIndex(p => p.id === activeId);
+    const newIndex = state.players.findIndex(p => p.id === overId);
+    if (oldIndex === -1 || newIndex === -1) return state;
+    
+    const newPlayers = [...state.players];
+    const [movedPlayer] = newPlayers.splice(oldIndex, 1);
+    newPlayers.splice(newIndex, 0, movedPlayer);
+    
+    return { players: newPlayers };
+  }),
 
   resetGame: () => set((state) => ({
     players: state.players.map((p, index) => ({ 

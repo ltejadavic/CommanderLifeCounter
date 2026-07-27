@@ -47,6 +47,7 @@ function AppContent() {
               updatePlayerName: useGameStore.getState().updatePlayerName,
               updatePlayerColor: useGameStore.getState().updatePlayerColor,
               updateCommander: useGameStore.getState().updateCommander,
+              reorderPlayers: useGameStore.getState().reorderPlayers,
               resetGame: useGameStore.getState().resetGame,
               resetGameFully: useGameStore.getState().resetGameFully,
               setMonarch: useGameStore.getState().setMonarch,

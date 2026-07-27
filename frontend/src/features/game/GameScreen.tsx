@@ -4,12 +4,57 @@ import { useGameStore } from '../../store/gameStore';
 import { PlayerPanel } from './PlayerPanel';
 import { CountersModal } from './CountersModal';
 import { CommanderSearchModal } from './CommanderSearchModal';
-import { RotateCcw, Maximize, Minimize } from 'lucide-react';
+import { RotateCcw, Maximize, Minimize, Settings2 } from 'lucide-react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type DragStartEvent,
+  DragOverlay,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  rectSortingStrategy,
+} from '@dnd-kit/sortable';
 
 export const GameScreen: React.FC = () => {
-  const { players, isArchenemy, resetGame, resetGameFully } = useGameStore();
+  const { players, isArchenemy, resetGame, resetGameFully, reorderPlayers } = useGameStore();
   const navigate = useNavigate();
   const [isFullscreen, setIsFullscreen] = React.useState(false);
+  const [isEditMode, setIsEditMode] = React.useState(false);
+  const [activeId, setActiveId] = React.useState<string | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      reorderPlayers(active.id as string, over.id as string);
+    }
+    setActiveId(null);
+  };
+
+  const handleDragCancel = () => {
+    setActiveId(null);
+  };
 
   const toggleFullscreen = async () => {
     if (!document.fullscreenElement) {
@@ -52,25 +97,58 @@ export const GameScreen: React.FC = () => {
   const isDraw = players.length > 0 && alivePlayers.length === 0;
   const winnerId = players.length > 1 && alivePlayers.length === 1 ? alivePlayers[0].id : null;
 
+  const activePlayer = players.find(p => p.id === activeId);
+  const activeIndex = players.findIndex(p => p.id === activeId);
+  const activeIsFlipped = activeIndex !== -1 && (isArchenemy ? activeIndex === 0 : activeIndex < Math.ceil(players.length / 2));
+
   return (
     <div className="h-screen w-screen bg-black overflow-hidden relative">
-      <div className={`grid h-full w-full gap-1 p-1 ${gridClass}`}>
-        {players.map((player, index) => {
-          const isFlipped = isArchenemy ? index === 0 : index < Math.ceil(players.length / 2);
-          const archenemySpan = isArchenemy && index === 0 ? "col-span-full" : "";
-          
-          return (
-            <div key={player.id} className={`relative rounded-2xl overflow-hidden shadow-2xl ${archenemySpan}`}>
-              <PlayerPanel 
-                player={player} 
-                isFlipped={isFlipped} 
-                isWinner={player.id === winnerId}
+      <DndContext 
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragCancel={handleDragCancel}
+      >
+        <SortableContext 
+          items={players.map(p => p.id)}
+          strategy={rectSortingStrategy}
+        >
+          <div className={`grid h-full w-full gap-1 p-1 ${gridClass}`}>
+            {players.map((player, index) => {
+              const isFlipped = isArchenemy ? index === 0 : index < Math.ceil(players.length / 2);
+              const archenemySpan = isArchenemy && index === 0 ? "col-span-full" : "";
+              
+              return (
+                <div key={player.id} className={`relative overflow-hidden ${archenemySpan}`}>
+                  <PlayerPanel 
+                    player={player} 
+                    isFlipped={isFlipped} 
+                    isWinner={player.id === winnerId}
+                    isDraw={isDraw}
+                    isEditMode={isEditMode}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </SortableContext>
+        
+        <DragOverlay dropAnimation={null}>
+          {activePlayer ? (
+            <div className="w-full h-full rounded-2xl overflow-hidden shadow-2xl ring-4 ring-white">
+              <PlayerPanel
+                player={activePlayer}
+                isFlipped={activeIsFlipped}
+                isWinner={activePlayer.id === winnerId}
                 isDraw={isDraw}
+                isEditMode={true}
+                isOverlay={true}
               />
             </div>
-          );
-        })}
-      </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
 
       {/* Central Menu Button */}
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 flex gap-2">
@@ -96,6 +174,15 @@ export const GameScreen: React.FC = () => {
           title="End Game"
         >
           <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <button 
+          className={`backdrop-blur-md p-4 rounded-full text-white shadow-2xl border transition-colors ${
+            isEditMode ? 'bg-blue-600 border-blue-400' : 'bg-neutral-800/80 border-white/10 hover:bg-neutral-700/80'
+          }`}
+          onClick={() => setIsEditMode(!isEditMode)}
+          title={isEditMode ? "Save Order" : "Reorder Players"}
+        >
+          <Settings2 className="w-8 h-8" />
         </button>
         <button 
           className="bg-neutral-800/80 backdrop-blur-md p-4 rounded-full text-white shadow-2xl border border-white/10 hover:bg-neutral-700/80 transition-colors"
