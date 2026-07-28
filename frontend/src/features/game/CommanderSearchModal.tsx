@@ -40,7 +40,8 @@ export const CommanderSearchModal: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:5000/api/scryfall/search?q=${encodeURIComponent(query)}`);
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${apiUrl}/api/scryfall/search?q=${encodeURIComponent(query)}`);
       if (!response.ok) {
         throw new Error('Failed to fetch commanders');
       }

@@ -16,7 +16,8 @@ function AppContent() {
       if (savedGameId) {
         try {
           // Fetch from the backend
-          const response = await fetch(`http://localhost:5000/api/game/${savedGameId}`);
+          const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+          const response = await fetch(`${apiUrl}/api/game/${savedGameId}`);
           if (response.ok) {
             const data = await response.json();
             
@@ -100,7 +101,8 @@ function AppContent() {
           }))
         };
 
-        await fetch('http://localhost:5000/api/game', {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        await fetch(`${apiUrl}/api/game`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(dto)

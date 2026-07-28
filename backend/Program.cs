@@ -17,12 +17,19 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 // CORS policy for frontend
+var frontendUrl = builder.Configuration.GetValue<string>("FrontendUrl");
+var allowedOrigins = new List<string> { "http://localhost:5173", "http://localhost", "http://127.0.0.1" };
+if (!string.IsNullOrEmpty(frontendUrl))
+{
+    allowedOrigins.Add(frontendUrl);
+}
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173", "http://localhost", "http://127.0.0.1")
+            policy.WithOrigins(allowedOrigins.ToArray())
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
