@@ -86,7 +86,7 @@ export const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, isFlipped = fa
         duration: 0.3,
         ease: 'linear'
       }}
-      className={`relative flex flex-col items-center justify-center h-full w-full select-none overflow-hidden rounded-2xl ${player.isDefeated ? 'opacity-50 grayscale' : ''} ${isFlipped ? 'rotate-180' : ''} ${isEditMode ? 'cursor-grab shadow-2xl ring-4 ring-white/50' : 'shadow-2xl'}`}
+      className={`relative flex flex-col items-center justify-center h-full w-full select-none overflow-hidden rounded-2xl ${player.isDefeated ? 'opacity-50 grayscale' : ''} ${isFlipped ? 'rotate-180' : ''} ${isEditMode ? 'cursor-grab shadow-2xl ring-4 ring-white/50 touch-none' : 'shadow-2xl'}`}
       {...attributes}
       {...listeners}
     >
@@ -182,7 +182,7 @@ export const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, isFlipped = fa
           className="flex-1 h-full flex items-center justify-center active:bg-black/20 transition-colors rounded-l-2xl"
           onClick={() => handleLifeChange(-1)}
         >
-          <Minus className="w-16 h-16 text-white/70" />
+          <Minus className="w-10 h-10 md:w-16 md:h-16 text-white/70" />
         </button>
         
         <motion.div 
@@ -190,7 +190,7 @@ export const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, isFlipped = fa
           initial={{ scale: 1.2, color: '#ffffff' }}
           animate={{ scale: 1, color: '#ffffff' }}
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
-          className="text-[8rem] font-bold text-white drop-shadow-xl tabular-nums tracking-tighter w-48 text-center pointer-events-none"
+          className="text-[5rem] md:text-[8rem] font-bold text-white drop-shadow-xl tabular-nums tracking-tighter w-24 md:w-48 text-center pointer-events-none"
         >
           {player.life}
         </motion.div>
@@ -199,7 +199,7 @@ export const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, isFlipped = fa
           className="flex-1 h-full flex items-center justify-center active:bg-black/20 transition-colors rounded-r-2xl"
           onClick={() => handleLifeChange(1)}
         >
-          <Plus className="w-16 h-16 text-white/70" />
+          <Plus className="w-10 h-10 md:w-16 md:h-16 text-white/70" />
         </button>
       </div>
 

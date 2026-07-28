@@ -58,13 +58,19 @@ export const GameScreen: React.FC = () => {
 
   const toggleFullscreen = async () => {
     if (!document.fullscreenElement) {
-      await document.documentElement.requestFullscreen().catch(err => console.error(err));
-      setIsFullscreen(true);
+      if (document.documentElement.requestFullscreen) {
+        await document.documentElement.requestFullscreen().catch(err => console.error(err));
+        setIsFullscreen(true);
+      }
     } else {
-      await document.exitFullscreen().catch(err => console.error(err));
-      setIsFullscreen(false);
+      if (document.exitFullscreen) {
+        await document.exitFullscreen().catch(err => console.error(err));
+        setIsFullscreen(false);
+      }
     }
   };
+
+  const isFullscreenSupported = !!document.documentElement.requestFullscreen;
 
   useEffect(() => {
     if (players.length === 0) {
@@ -86,11 +92,11 @@ export const GameScreen: React.FC = () => {
     else gridClass = "grid-cols-7 grid-rows-2"; // 8 players max
   } else {
     if (players.length === 3) gridClass = "grid-cols-1 md:grid-cols-2 grid-rows-3 md:grid-rows-2";
-    if (players.length === 4) gridClass = "grid-cols-2 grid-rows-2";
-    if (players.length === 5) gridClass = "grid-cols-2 lg:grid-cols-3 grid-rows-3 lg:grid-rows-2";
+    if (players.length === 4) gridClass = "grid-cols-1 md:grid-cols-2 grid-rows-4 md:grid-rows-2";
+    if (players.length === 5) gridClass = "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-rows-5 md:grid-rows-3 lg:grid-rows-2";
     if (players.length === 6) gridClass = "grid-cols-2 md:grid-cols-3 grid-rows-3 md:grid-rows-2";
-    if (players.length === 7) gridClass = "grid-cols-3 lg:grid-cols-4 grid-rows-3 lg:grid-rows-2";
-    if (players.length === 8) gridClass = "grid-cols-4 grid-rows-2";
+    if (players.length === 7) gridClass = "grid-cols-2 md:grid-cols-4 grid-rows-4 md:grid-rows-2";
+    if (players.length === 8) gridClass = "grid-cols-2 md:grid-cols-4 grid-rows-4 md:grid-rows-2";
   }
 
   const alivePlayers = players.filter(p => !p.isDefeated);
@@ -184,12 +190,14 @@ export const GameScreen: React.FC = () => {
         >
           <Settings2 className="w-8 h-8" />
         </button>
-        <button 
-          className="bg-neutral-800/80 backdrop-blur-md p-4 rounded-full text-white shadow-2xl border border-white/10 hover:bg-neutral-700/80 transition-colors"
-          onClick={toggleFullscreen}
-        >
-          {isFullscreen ? <Minimize className="w-8 h-8" /> : <Maximize className="w-8 h-8" />}
-        </button>
+        {isFullscreenSupported && (
+          <button 
+            className="bg-neutral-800/80 backdrop-blur-md p-4 rounded-full text-white shadow-2xl border border-white/10 hover:bg-neutral-700/80 transition-colors"
+            onClick={toggleFullscreen}
+          >
+            {isFullscreen ? <Minimize className="w-8 h-8" /> : <Maximize className="w-8 h-8" />}
+          </button>
+        )}
       </div>
 
       {/* Modals */}
