@@ -91,12 +91,12 @@ export const GameScreen: React.FC = () => {
     else if (players.length === 7) gridClass = "grid-cols-6 grid-rows-2";
     else gridClass = "grid-cols-7 grid-rows-2"; // 8 players max
   } else {
-    if (players.length === 3) gridClass = "grid-cols-1 md:grid-cols-2 grid-rows-3 md:grid-rows-2";
-    if (players.length === 4) gridClass = "grid-cols-1 md:grid-cols-2 grid-rows-4 md:grid-rows-2";
-    if (players.length === 5) gridClass = "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-rows-5 md:grid-rows-3 lg:grid-rows-2";
-    if (players.length === 6) gridClass = "grid-cols-2 md:grid-cols-3 grid-rows-3 md:grid-rows-2";
-    if (players.length === 7) gridClass = "grid-cols-2 md:grid-cols-4 grid-rows-4 md:grid-rows-2";
-    if (players.length === 8) gridClass = "grid-cols-2 md:grid-cols-4 grid-rows-4 md:grid-rows-2";
+    if (players.length === 3) gridClass = "grid-cols-1 sm:grid-cols-2 grid-rows-3 sm:grid-rows-2";
+    if (players.length === 4) gridClass = "grid-cols-1 sm:grid-cols-2 grid-rows-4 sm:grid-rows-2";
+    if (players.length === 5) gridClass = "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 grid-rows-5 sm:grid-rows-3 lg:grid-rows-2";
+    if (players.length === 6) gridClass = "grid-cols-2 sm:grid-cols-3 grid-rows-3 sm:grid-rows-2";
+    if (players.length === 7) gridClass = "grid-cols-2 sm:grid-cols-4 grid-rows-4 sm:grid-rows-2";
+    if (players.length === 8) gridClass = "grid-cols-2 sm:grid-cols-4 grid-rows-4 sm:grid-rows-2";
   }
 
   const alivePlayers = players.filter(p => !p.isDefeated);

@@ -215,10 +215,10 @@ export const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, isFlipped = fa
       <AnimatePresence>
         {recentLifeChange !== 0 && (
           <motion.div
-            initial={{ opacity: 0, y: -40, scale: 0.5, x: '-50%' }}
-            animate={{ opacity: 1, y: -140, scale: 1, x: '-50%' }}
-            exit={{ opacity: 0, scale: 0.8, x: '-50%', y: -160 }}
-            className={`absolute top-1/2 left-1/2 z-30 px-6 py-2 rounded-full font-bold text-4xl shadow-2xl pointer-events-none backdrop-blur-md ${recentLifeChange > 0 ? 'bg-green-500/90 text-white' : 'bg-red-500/90 text-white'}`}
+            initial={{ opacity: 0, y: 10, scale: 0.5, x: '-50%' }}
+            animate={{ opacity: 1, y: 0, scale: 1, x: '-50%' }}
+            exit={{ opacity: 0, scale: 0.8, x: '-50%', y: -10 }}
+            className={`absolute top-1/4 left-1/2 z-30 px-4 py-1 sm:px-6 sm:py-2 rounded-full font-bold text-2xl sm:text-4xl shadow-2xl pointer-events-none backdrop-blur-md ${recentLifeChange > 0 ? 'bg-green-500/90 text-white' : 'bg-red-500/90 text-white'}`}
           >
             {recentLifeChange > 0 ? `+${recentLifeChange}` : recentLifeChange}
           </motion.div>
