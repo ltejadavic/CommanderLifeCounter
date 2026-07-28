@@ -96,7 +96,7 @@ export const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, isFlipped = fa
       {/* Background Commander Art */}
       {player.commanderArtCropUrl && (
         <div 
-          className="absolute inset-0 opacity-30 mix-blend-overlay pointer-events-none"
+          className="absolute inset-0 opacity-50 mix-blend-overlay pointer-events-none"
           style={{ 
             backgroundImage: `url(${player.commanderArtCropUrl})`, 
             backgroundSize: 'cover', 
