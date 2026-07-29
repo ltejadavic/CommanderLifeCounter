@@ -18,7 +18,6 @@ interface PlayerPanelProps {
 export const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, isFlipped = false, isWinner = false, isDraw = false, isEditMode = false, isOverlay = false }) => {
   const updateLife = useGameStore((state) => state.updateLife);
   const setActivePlayer = useUIStore((state) => state.setActivePlayer);
-  const commanderOpacity = useGameStore((state) => state.commanderOpacity);
 
   const [recentLifeChange, setRecentLifeChange] = React.useState(0);
   const changeTimeoutRef = React.useRef<number | null>(null);
@@ -138,7 +137,7 @@ export const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, isFlipped = fa
         <div 
           className="absolute inset-0 mix-blend-overlay pointer-events-none"
           style={{ 
-            opacity: commanderOpacity / 100,
+            opacity: (player.commanderOpacity ?? 50) / 100,
             backgroundImage: `url(${player.commanderArtCropUrl})`, 
             backgroundSize: 'cover', 
             backgroundPosition: 'center' 

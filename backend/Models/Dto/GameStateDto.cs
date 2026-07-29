@@ -18,6 +18,7 @@ public class PlayerDto
     public string? CommanderName { get; set; }
     public string? CommanderImageUrl { get; set; }
     public string? CommanderArtCropUrl { get; set; }
+    public int CommanderOpacity { get; set; } = 50;
     
     public bool IsMonarch { get; set; }
     

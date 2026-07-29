@@ -45,6 +45,7 @@ public class GameController : ControllerBase
                 CommanderName = p.CommanderName,
                 CommanderImageUrl = p.CommanderImageUrl,
                 CommanderArtCropUrl = p.CommanderArtCropUrl,
+                CommanderOpacity = p.CommanderOpacity,
                 CommanderDamage = p.CommanderDamages.ToDictionary(cd => cd.OpponentId.ToString(), cd => cd.Damage),
                 Counters = p.Counters.ToDictionary(c => c.CounterType, c => c.Value)
             }).ToList()
@@ -89,6 +90,7 @@ public class GameController : ControllerBase
                 CommanderName = p.CommanderName,
                 CommanderImageUrl = p.CommanderImageUrl,
                 CommanderArtCropUrl = p.CommanderArtCropUrl,
+                CommanderOpacity = p.CommanderOpacity,
                 CommanderDamages = p.CommanderDamage.Select(kv => new CommanderDamage
                 {
                     Id = Guid.NewGuid(),

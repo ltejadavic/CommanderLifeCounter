@@ -37,6 +37,7 @@ function AppContent() {
                 commanderName: p.commanderName,
                 commanderImageUrl: p.commanderImageUrl,
                 commanderArtCropUrl: p.commanderArtCropUrl,
+                commanderOpacity: p.commanderOpacity ?? 50,
                 commanderDamage: p.commanderDamage || {},
                 counters: p.counters || { poison: 0, energy: 0, experience: 0, radiation: 0 }
               })),
@@ -47,6 +48,7 @@ function AppContent() {
               updateCounter: useGameStore.getState().updateCounter,
               updatePlayerName: useGameStore.getState().updatePlayerName,
               updatePlayerColor: useGameStore.getState().updatePlayerColor,
+              updatePlayerOpacity: useGameStore.getState().updatePlayerOpacity,
               updateCommander: useGameStore.getState().updateCommander,
               reorderPlayers: useGameStore.getState().reorderPlayers,
               resetGame: useGameStore.getState().resetGame,
@@ -54,8 +56,6 @@ function AppContent() {
               setMonarch: useGameStore.getState().setMonarch,
               setGameId: useGameStore.getState().setGameId,
               setGameState: useGameStore.getState().setGameState,
-              commanderOpacity: useGameStore.getState().commanderOpacity,
-              setCommanderOpacity: useGameStore.getState().setCommanderOpacity,
             };
             
             setGameState(state);
@@ -98,6 +98,7 @@ function AppContent() {
             commanderName: p.commanderName,
             commanderImageUrl: p.commanderImageUrl,
             commanderArtCropUrl: p.commanderArtCropUrl,
+            commanderOpacity: p.commanderOpacity ?? 50,
             commanderDamage: p.commanderDamage,
             counters: p.counters
           }))

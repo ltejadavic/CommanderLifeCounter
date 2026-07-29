@@ -111,42 +111,7 @@ export const SetupScreen: React.FC = () => {
             </div>
           </div>
 
-          <div className="pt-2 border-t border-neutral-700">
-            <label className="block text-sm font-medium text-neutral-400 mb-2">
-              Commander Background Opacity
-            </label>
-            <div className="flex items-center gap-4">
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={useGameStore((state) => state.commanderOpacity)}
-                onChange={(e) => useGameStore.getState().setCommanderOpacity(parseInt(e.target.value))}
-                className="flex-1 accent-purple-500"
-              />
-              <div className="relative w-20">
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={useGameStore((state) => state.commanderOpacity)}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/\D/g, '');
-                    if (val === '') {
-                      useGameStore.getState().setCommanderOpacity(0);
-                    } else {
-                      const num = parseInt(val, 10);
-                      if (num <= 100) {
-                        useGameStore.getState().setCommanderOpacity(num);
-                      }
-                    }
-                  }}
-                  className="w-full py-2 px-3 rounded-lg font-bold text-center bg-neutral-700 text-white outline-none focus:ring-2 focus:ring-purple-500"
-                />
-                <span className="absolute right-3 top-2.5 text-neutral-400 font-bold">%</span>
-              </div>
-            </div>
-          </div>
+
 
           <div className="pt-2 border-t border-neutral-700 flex items-center justify-between">
             <div>

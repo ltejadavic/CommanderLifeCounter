@@ -19,6 +19,7 @@ export type Player = {
   commanderName?: string;
   commanderImageUrl?: string;
   commanderArtCropUrl?: string;
+  commanderOpacity?: number;
 };
 
 export type GameState = {
@@ -34,6 +35,7 @@ export type GameState = {
   updateCounter: (playerId: string, counterType: string, delta: number) => void;
   updatePlayerName: (playerId: string, name: string) => void;
   updatePlayerColor: (playerId: string, color: string) => void;
+  updatePlayerOpacity: (playerId: string, opacity: number) => void;
   updateCommander: (playerId: string, name: string, imageUrl: string, artCropUrl: string) => void;
   reorderPlayers: (activeId: string, overId: string) => void;
   resetGame: () => void;
@@ -41,8 +43,6 @@ export type GameState = {
   setMonarch: (playerId: string) => void;
   setGameId: (id: string | null) => void;
   setGameState: (state: GameState) => void;
-  commanderOpacity: number;
-  setCommanderOpacity: (opacity: number) => void;
 };
 
 export const DEFAULT_COLORS = [
@@ -62,9 +62,7 @@ export const useGameStore = create<GameState>((set) => ({
   playerCount: 4,
   startingLife: 40,
   isArchenemy: false,
-  commanderOpacity: 50,
   
-  setCommanderOpacity: (opacity) => set({ commanderOpacity: opacity }),
   setSetupConfig: (playerCount, startingLife, isArchenemy = false) => set({ playerCount, startingLife, isArchenemy }),
 
   initializeGame: (playerCount) => set((state) => {
@@ -79,6 +77,7 @@ export const useGameStore = create<GameState>((set) => ({
       isMonarch: false,
       commanderDamage: {},
       counters: { poison: 0, energy: 0, experience: 0, radiation: 0 },
+      commanderOpacity: 50,
     }));
     return { players: newPlayers };
   }),
@@ -136,6 +135,10 @@ export const useGameStore = create<GameState>((set) => ({
 
   updatePlayerColor: (playerId, color) => set((state) => ({
     players: state.players.map((p) => p.id === playerId ? { ...p, colorAccent: color } : p)
+  })),
+
+  updatePlayerOpacity: (playerId, opacity) => set((state) => ({
+    players: state.players.map((p) => p.id === playerId ? { ...p, commanderOpacity: opacity } : p)
   })),
 
   updateCommander: (playerId, name, imageUrl, artCropUrl) => set((state) => ({

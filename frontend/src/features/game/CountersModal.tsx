@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export const CountersModal: React.FC = () => {
   const { activePlayerId, setActivePlayer, openSearchModal } = useUIStore();
-  const { players, updateCommanderDamage, updateCounter, setMonarch, updatePlayerName, updatePlayerColor } = useGameStore();
+  const { players, updateCommanderDamage, updateCounter, setMonarch, updatePlayerName, updatePlayerColor, updatePlayerOpacity } = useGameStore();
 
   const [diceResult, setDiceResult] = React.useState<number | null>(null);
   const [isRolling, setIsRolling] = React.useState(false);
@@ -203,6 +203,43 @@ export const CountersModal: React.FC = () => {
                     style={{ backgroundColor: color }}
                   />
                 ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2 mt-4">
+              <label className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
+                Commander Background Opacity
+              </label>
+              <div className="flex items-center gap-4">
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={player.commanderOpacity ?? 50}
+                  onChange={(e) => updatePlayerOpacity(activePlayerId!, parseInt(e.target.value))}
+                  className="flex-1 accent-purple-500"
+                />
+                <div className="relative w-20">
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    value={player.commanderOpacity ?? 50}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/\D/g, '');
+                      if (val === '') {
+                        updatePlayerOpacity(activePlayerId!, 0);
+                      } else {
+                        const num = parseInt(val, 10);
+                        if (num <= 100) {
+                          updatePlayerOpacity(activePlayerId!, num);
+                        }
+                      }
+                    }}
+                    className="w-full py-2 px-3 rounded-lg font-bold text-center bg-neutral-800 border border-neutral-700 text-white outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                  <span className="absolute right-3 top-2.5 text-neutral-400 font-bold">%</span>
+                </div>
               </div>
             </div>
           </div>
