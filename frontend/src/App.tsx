@@ -54,6 +54,8 @@ function AppContent() {
               setMonarch: useGameStore.getState().setMonarch,
               setGameId: useGameStore.getState().setGameId,
               setGameState: useGameStore.getState().setGameState,
+              commanderOpacity: useGameStore.getState().commanderOpacity,
+              setCommanderOpacity: useGameStore.getState().setCommanderOpacity,
             };
             
             setGameState(state);

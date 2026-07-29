@@ -41,6 +41,8 @@ export type GameState = {
   setMonarch: (playerId: string) => void;
   setGameId: (id: string | null) => void;
   setGameState: (state: GameState) => void;
+  commanderOpacity: number;
+  setCommanderOpacity: (opacity: number) => void;
 };
 
 export const DEFAULT_COLORS = [
@@ -60,7 +62,9 @@ export const useGameStore = create<GameState>((set) => ({
   playerCount: 4,
   startingLife: 40,
   isArchenemy: false,
+  commanderOpacity: 50,
   
+  setCommanderOpacity: (opacity) => set({ commanderOpacity: opacity }),
   setSetupConfig: (playerCount, startingLife, isArchenemy = false) => set({ playerCount, startingLife, isArchenemy }),
 
   initializeGame: (playerCount) => set((state) => {

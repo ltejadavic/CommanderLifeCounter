@@ -18,9 +18,14 @@ interface PlayerPanelProps {
 export const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, isFlipped = false, isWinner = false, isDraw = false, isEditMode = false, isOverlay = false }) => {
   const updateLife = useGameStore((state) => state.updateLife);
   const setActivePlayer = useUIStore((state) => state.setActivePlayer);
+  const commanderOpacity = useGameStore((state) => state.commanderOpacity);
 
   const [recentLifeChange, setRecentLifeChange] = React.useState(0);
   const changeTimeoutRef = React.useRef<number | null>(null);
+  
+  const holdIntervalRef = React.useRef<number | null>(null);
+  const holdTimeoutRef = React.useRef<number | null>(null);
+  const pressCountRef = React.useRef<number>(0);
 
   const handleLifeChange = (delta: number) => {
     updateLife(player.id, delta);
@@ -34,6 +39,41 @@ export const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, isFlipped = fa
       setRecentLifeChange(0);
     }, 2000);
   };
+
+  const stopChanging = () => {
+    if (holdIntervalRef.current) clearInterval(holdIntervalRef.current);
+    if (holdTimeoutRef.current) clearTimeout(holdTimeoutRef.current);
+    pressCountRef.current = 0;
+  };
+
+  const startChanging = (delta: number) => {
+    // Immediate first change
+    handleLifeChange(delta);
+    
+    // Wait 500ms before auto-repeating
+    holdTimeoutRef.current = window.setTimeout(() => {
+      let speed = 200; // Normal speed
+      pressCountRef.current = 0;
+      
+      const tick = () => {
+        handleLifeChange(delta);
+        pressCountRef.current++;
+        
+        // Accelerate after 5 ticks (1 second) to 2x speed (100ms)
+        if (pressCountRef.current === 5) {
+          if (holdIntervalRef.current) clearInterval(holdIntervalRef.current);
+          speed = 100;
+          holdIntervalRef.current = window.setInterval(tick, speed);
+        }
+      };
+      
+      holdIntervalRef.current = window.setInterval(tick, speed);
+    }, 500);
+  };
+
+  React.useEffect(() => {
+    return () => stopChanging();
+  }, []);
 
   // Calculate Danger Level for Visual Feedback (0 to 1)
   const lifeDanger = !player.isDefeated && player.life <= 10 ? (11 - Math.max(1, player.life)) / 10 : 0;
@@ -96,8 +136,9 @@ export const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, isFlipped = fa
       {/* Background Commander Art */}
       {player.commanderArtCropUrl && (
         <div 
-          className="absolute inset-0 opacity-50 mix-blend-overlay pointer-events-none"
+          className="absolute inset-0 mix-blend-overlay pointer-events-none"
           style={{ 
+            opacity: commanderOpacity / 100,
             backgroundImage: `url(${player.commanderArtCropUrl})`, 
             backgroundSize: 'cover', 
             backgroundPosition: 'center' 
@@ -179,10 +220,20 @@ export const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, isFlipped = fa
       {/* Life Controls */}
       <div className="flex w-full h-full items-center justify-between px-2">
         <button 
-          className="flex-1 h-full flex items-center justify-center active:bg-black/20 transition-colors rounded-l-2xl"
-          onClick={() => handleLifeChange(-1)}
+          className="flex-1 h-full flex items-center justify-center active:bg-black/20 transition-colors rounded-l-2xl select-none"
+          onPointerDown={(e) => {
+            if (isEditMode) return;
+            e.currentTarget.setPointerCapture(e.pointerId);
+            startChanging(-1);
+          }}
+          onPointerUp={(e) => {
+            if (isEditMode) return;
+            e.currentTarget.releasePointerCapture(e.pointerId);
+            stopChanging();
+          }}
+          onPointerCancel={stopChanging}
         >
-          <Minus className="w-10 h-10 md:w-16 md:h-16 text-white/70" />
+          <Minus className="w-10 h-10 md:w-16 md:h-16 text-white/70 pointer-events-none" />
         </button>
         
         <motion.div 
@@ -196,10 +247,20 @@ export const PlayerPanel: React.FC<PlayerPanelProps> = ({ player, isFlipped = fa
         </motion.div>
 
         <button 
-          className="flex-1 h-full flex items-center justify-center active:bg-black/20 transition-colors rounded-r-2xl"
-          onClick={() => handleLifeChange(1)}
+          className="flex-1 h-full flex items-center justify-center active:bg-black/20 transition-colors rounded-r-2xl select-none"
+          onPointerDown={(e) => {
+            if (isEditMode) return;
+            e.currentTarget.setPointerCapture(e.pointerId);
+            startChanging(1);
+          }}
+          onPointerUp={(e) => {
+            if (isEditMode) return;
+            e.currentTarget.releasePointerCapture(e.pointerId);
+            stopChanging();
+          }}
+          onPointerCancel={stopChanging}
         >
-          <Plus className="w-10 h-10 md:w-16 md:h-16 text-white/70" />
+          <Plus className="w-10 h-10 md:w-16 md:h-16 text-white/70 pointer-events-none" />
         </button>
       </div>
 
